@@ -6,4 +6,6 @@ app.get('/', (request, response) => {
     return response.json({ message: 'Hello World' });
 });
 
-app.listen(3333);
+app.listen(process.env.SERVER_PORT, () => {
+    console.log('Server started at http://localhost:${process.env.SERVER_PORT}')
+});
