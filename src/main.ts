@@ -1,11 +1,12 @@
-import express, { request, response } from 'express';
+import 'dotenv/config'
+import express from 'express';
+
+import './database/connect'
 
 const app = express();
 
-app.get('/', (request, response) => {
-    return response.json({ message: 'Hello World' });
-});
+app.use(express.json())
 
 app.listen(process.env.SERVER_PORT, () => {
-    console.log('Server started at http://localhost:${process.env.SERVER_PORT}')
+    console.log(`🚀 Server started at http://localhost:${process.env.SERVER_PORT}`)
 });
