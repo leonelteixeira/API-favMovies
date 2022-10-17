@@ -5,7 +5,7 @@ import { AppDataSource } from '../database/connect';
 import { generateKeySync } from 'crypto';
 import { SimpleConsoleLogger } from 'typeorm';
 
-
+// Ai que delicia !!!!!!!!!!!!!!!!!!!!!!!
 class movieController {
     async create (req: Request, res: Response) {
         // pegar o titulo no body da requisição
