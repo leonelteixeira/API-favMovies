@@ -1,5 +1,6 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
+import  Movie  from "../models/Movie"
 
 const AppDataSource = new DataSource({
     type: "postgres",
@@ -8,9 +9,11 @@ const AppDataSource = new DataSource({
     username: "postgres",
     password: "postgres",
     database: "postgres",
-    entities: ["src/models/*.ts"],
     synchronize: true,
     logging: false,
+    entities: ["src/models/*.ts"],
+    subscribers: [],
+    migrations: [],
 })
 
 AppDataSource.initialize()
@@ -19,3 +22,4 @@ AppDataSource.initialize()
     })
     .catch((error) => console.log(error))
 
+export { AppDataSource }
