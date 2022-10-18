@@ -49,19 +49,24 @@ class movieController {
     async delete (req: Request, res: Response) {
         const movieRepository = AppDataSource.getRepository(Movie)
         const id = req.params.id
-        await movieRepository.delete(id)
-        console.log("Movie", id, "was deleted!!")
-        return res.status(200).json(`Movie ${id} was deleted!!`)
-
-        
-        
-        //const movie = new Movie()
-        //const savedMovies = AppDataSource.manager.find(Movie)
-       // const movieToRemove = await savedMovies.(movie.id)
-       // await savedMovies.(movieToRemove)
-       // console.log(`Movie ${movie.title} was deleted!!`)
-        //        return res.status(200).json(`Movie ${movie.title} was deleted!!`)
+        const result = await movieRepository.delete(id)
+        console.log(result)
+        console.log("Movie with Id:", id, "was deleted!!")
+        return res.status(200).json(`Movie with Id: ${id} was deleted!!`)
     }
+
+    async findOneBy (req: Request, res: Response) {
+        const movieRepository = AppDataSource.getRepository(Movie) 
+        const id = req.params.id
+        const result = await movieRepository.findOneBy(req.params)
+            if (!result) { 
+                console.log(`Movie with Id: ${id} don't exist!!`)
+                return res.status(400).json(`Movie with Id: ${id} don't exist!!`)}
+        console.log(result)
+        return res.status(200).json(result)
+    }
+
+
     
 
         
