@@ -4,6 +4,9 @@ import axios from 'axios';
 import { AppDataSource } from '../database/connect';
 import { generateKeySync } from 'crypto';
 import { SimpleConsoleLogger } from 'typeorm';
+import { ListMoviesResponse } from '../dto/ListMoviesResponse';
+import { ListGetMovieResponse } from '../dto/ListGetMovieResponse';
+import { title } from 'process';
 
 // Ai que delicia !!!!!!!!!!!!!!!!!!!!!!!
 class movieController {
@@ -12,10 +15,16 @@ class movieController {
         const title=req.body.title
         // integrar com o primeiro endpoint passando o titulo e pegar o movieId do imdb para chamar o segundo
         const response = await axios.get(`https://imdb-api.com/en/API/SearchMovie/k_8qwlljj8/${title}`)
-        const imdbId=response.data.results[0].id
+        const listMoviesResponse: ListMoviesResponse = response.data
+            if (!listMoviesResponse.results.length) { 
+                console.log(`Movie ${req.body.title} don't exist!!`)
+                return res.status(400).json(`Movie ${title} don't exist!!`)
+            } 
+        const imdbId = listMoviesResponse.results[0].id
         console.log(imdbId)
         // integrar com o segundo endpoint para pegar as informações relevantes (genres, runtimeMins, imdbRating)
         const responseGetMovie = await axios.get(`https://imdb-api.com/en/API/Title/k_8qwlljj8/${imdbId}`)
+        const listGetMovieResponse: ListGetMovieResponse = responseGetMovie.data
         console.log(responseGetMovie.data)
         
         // montar um Objeto Movie com as informações (Title, genres, runtimeMins, imdbRating)
@@ -35,26 +44,29 @@ class movieController {
         
         //console.log(response.data)
         return res.status(201).json(movieSave);
-        } 
+    } 
+    
+    async delete (req: Request, res: Response) {
+        const movieRepository = AppDataSource.getRepository(Movie)
+        const id = req.params.id
+        await movieRepository.delete(id)
+        console.log("Movie", id, "was deleted!!")
+        return res.status(200).json(`Movie ${id} was deleted!!`)
+
         
-    //async findById (req: Request, res: Response) {
-        //console.log(req.body.id)
-        //let Movie = await axios.get(`https://imdb-api.com/en/API/Title/k_wpz80rsa/tt1375666/${req.body.id}`)
-        //return res.status(200).json(Movie);
-        //}
+        
+        //const movie = new Movie()
+        //const savedMovies = AppDataSource.manager.find(Movie)
+       // const movieToRemove = await savedMovies.(movie.id)
+       // await savedMovies.(movieToRemove)
+       // console.log(`Movie ${movie.title} was deleted!!`)
+        //        return res.status(200).json(`Movie ${movie.title} was deleted!!`)
+    }
+    
 
         
 }
 export default movieController
 
-    // const movieRepository = AppDataSource.getRepository(Movie);
-    // const movieExists = await movieRepository.findOne({title: req.body.title})
-    // if (movieExists) {
-    //   console.log(`Movie ${req.body.name} already exist`)
-    //   return res.status(400).json({message: `Movie ${req.body.title} already exist`})
-    // }
-    // const response = await axios.get(` https://imdb-api.com/en/API/SearchMovie/k_wpz80rsa/inception%202010=${req.body.name}`)
-    // const moviesAppearence = response.data.results[0].films.length
-    // let movieCreated = await movieRepository.create({ title: req.body.title, });
- //console.log(JSON.stringify(response.data, null, 2))
+    
     

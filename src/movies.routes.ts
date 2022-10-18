@@ -5,6 +5,6 @@ const router = Router()
 const movieController = new MovieController()
 
 router.post('/movies', movieController.create)
-//router.get('/movies/id', movieController.findById)
+router.delete('/movies/:id', movieController.delete)
 
 export default router
