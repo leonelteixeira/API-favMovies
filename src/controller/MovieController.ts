@@ -3,7 +3,7 @@ import Movie from "../models/Movie";
 import axios from 'axios';
 import { AppDataSource } from '../database/connect';
 import { generateKeySync } from 'crypto';
-import { SimpleConsoleLogger } from 'typeorm';
+import { createQueryBuilder, SimpleConsoleLogger } from 'typeorm';
 import { ListMoviesResponse } from '../dto/ListMoviesResponse';
 import { ListGetMovieResponse } from '../dto/ListGetMovieResponse';
 import { title } from 'process';
@@ -67,14 +67,13 @@ class movieController {
     }
 
     async findAndCountBy (req: Request, res: Response) {
-        const movieRepository = AppDataSource.getRepository(Movie) 
-        const movieAllList = await AppDataSource.manager.find(Movie)
-        movieAllList.sort(function imdbRating(a,b) {
-             if(a < b) return -1;
-             if(a > b) return 1;
-             return 0;
-         })
-         console.log(movieAllList.sort)
+        const movieRepository = AppDataSource.getRepository(Movie)
+        const movieAllList = await movieRepository.find({
+            order: {
+                imdbRating: "DESC"
+            }
+        }) 
+        console.log(movieAllList)
         return res.status(200).json(movieAllList)
     }
     
