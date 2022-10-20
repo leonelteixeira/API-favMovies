@@ -61,14 +61,23 @@ class movieController {
         const result = await movieRepository.findOneBy(req.params)
             if (!result) { 
                 console.log(`Movie with Id: ${id} don't exist!!`)
-                return res.status(400).json(`Movie with Id: ${id} don't exist!!`)}
+                return res.status(404).json(`Movie with Id: ${id} don't exist!!`)}
         console.log(result)
         return res.status(200).json(result)
     }
 
-
+    async findAndCountBy (req: Request, res: Response) {
+        const movieRepository = AppDataSource.getRepository(Movie) 
+        const movieAllList = await AppDataSource.manager.find(Movie)
+        movieAllList.sort(function imdbRating(a,b) {
+             if(a < b) return -1;
+             if(a > b) return 1;
+             return 0;
+         })
+         console.log(movieAllList.sort)
+        return res.status(200).json(movieAllList)
+    }
     
-
         
 }
 export default movieController
