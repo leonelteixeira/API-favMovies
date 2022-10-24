@@ -3,7 +3,7 @@ import Movie from "../models/Movie";
 import axios from 'axios';
 import { AppDataSource } from '../database/connect';
 import { generateKeySync } from 'crypto';
-import { createQueryBuilder, ILike, Like, SimpleConsoleLogger } from 'typeorm';
+import { createQueryBuilder, ILike, LessThanOrEqual, SimpleConsoleLogger } from 'typeorm';
 import { ListMoviesResponse } from '../dto/ListMoviesResponse';
 import { ListGetMovieResponse } from '../dto/ListGetMovieResponse';
 import { title } from 'process';
@@ -71,6 +71,8 @@ class movieController {
         const movieRepository = AppDataSource.getRepository(Movie)
         if (req.query.genres) {
             conditions.genres = ILike(`%${req.query.genres}%`)
+        } else if (req.query.maxRuntimeMins) {
+            conditions.runtimeMins = LessThanOrEqual(req.query.maxRuntimeMins)
         }
         const movieAllList = await movieRepository.find({
             order: {
